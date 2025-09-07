@@ -9,10 +9,14 @@ const config = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      colors: {
+        'brand-primary': '#4F46E5', // A nice indigo
+        'brand-secondary': '#EC4899', // A vibrant pink for accents
+        'brand-light': '#F0F2F5', // A light gray for backgrounds
+        'brand-dark': '#111827', // A dark gray for text
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
       },
     },
   },
