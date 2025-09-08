@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { showToast } from "../utils/toast";
 
 type VideoInput = {
   title: string;
@@ -11,6 +12,7 @@ type VideoInput = {
 
 interface AddVideoFormProps {
   onAddVideo: (video: VideoInput) => void;
+  onDeleteVideo?: (videoId: string) => void;
 }
 
 const AddVideoForm: React.FC<AddVideoFormProps> = ({ onAddVideo }) => {
@@ -23,6 +25,7 @@ const AddVideoForm: React.FC<AddVideoFormProps> = ({ onAddVideo }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!title || !description || !url) {
+      showToast.error("Please fill in all required fields");
       return;
     }
 
@@ -30,6 +33,7 @@ const AddVideoForm: React.FC<AddVideoFormProps> = ({ onAddVideo }) => {
 
     setTimeout(() => {
       onAddVideo({ title, description, url, category: category || "General" });
+      showToast.success("Video added successfully!");
       setTitle("");
       setDescription("");
       setUrl("");

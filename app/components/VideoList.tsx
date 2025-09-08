@@ -1,5 +1,7 @@
 "use client";
 
+import { showToast } from "../utils/toast";
+
 type WatchVideo = {
   id: number;
   title: string;
@@ -21,6 +23,15 @@ const VideoList = ({
   onWatch,
   onDelete,
 }: VideoListProps) => {
+  const handleDeleteConfirm = (video: WatchVideo) => {
+    const confirmed = window.confirm(`Do you want to delete "${video.title}"?`);
+
+    if (confirmed) {
+      onDelete(video.id);
+      showToast.success(`"${video.title}" has been deleted from your library`);
+    }
+  };
+
   return (
     <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 overflow-hidden">
       <div className="bg-gradient-to-r from-indigo-600 to-indigo-400 p-6 text-white">
@@ -120,7 +131,7 @@ const VideoList = ({
                       {currentVideoId === video.id ? "▶ Playing" : "Watch"}
                     </button>
                     <button
-                      onClick={() => onDelete(video.id)}
+                      onClick={() => handleDeleteConfirm(video)}
                       className="p-2.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200"
                       title="Delete video"
                     >

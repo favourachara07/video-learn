@@ -1,154 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import VideoPlayer from "./components/VideoPlayer";
 import AddVideoForm from "./components/AddVideoForm";
 import VideoList from "./components/VideoList";
-import { initialVideos } from "./components/data";
+import { useVideoManager } from "@/hooks/useVideoManager";
+import { getYouTubeID } from "./utils/youtube";
 
-// Helper function to extract YouTube video ID from URL
-const getYouTubeID = (url: string) => {
-  const regExp =
-    /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-  const match = url.match(regExp);
-  return match && match[2].length === 11 ? match[2] : null;
-};
-
-// Helper functions for localStorage
-const loadVideosFromStorage = () => {
-  if (typeof window !== "undefined") {
-    try {
-      const savedVideos = localStorage.getItem("edulearn-videos");
-      if (savedVideos) {
-        const parsedVideos = JSON.parse(savedVideos);
-        // If we have saved videos, use them; otherwise use initial videos
-        return parsedVideos.length > 0 ? parsedVideos : initialVideos;
-      }
-    } catch (error) {
-      console.error("Error loading videos from localStorage:", error);
-    }
-  }
-  return initialVideos;
-};
-
-const saveVideosToStorage = (
-  videos: Array<{
-    id: number;
-    url: string;
-    title: string;
-    description: string;
-    category: string;
-  }>
-) => {
-  if (typeof window !== "undefined") {
-    try {
-      localStorage.setItem("edulearn-videos", JSON.stringify(videos));
-    } catch (error) {
-      console.error("Error saving videos to localStorage:", error);
-    }
-  }
-};
-
-const loadCurrentVideoFromStorage = (
-  videos: Array<{
-    id: number;
-    url: string;
-    title: string;
-    description: string;
-    category: string;
-  }>
-) => {
-  if (typeof window !== "undefined") {
-    try {
-      const savedCurrentVideoId = localStorage.getItem(
-        "edulearn-current-video"
-      );
-      if (savedCurrentVideoId) {
-        const currentVideo = videos.find(
-          (video) => video.id === parseInt(savedCurrentVideoId)
-        );
-        if (currentVideo) {
-          return currentVideo;
-        }
-      }
-    } catch (error) {
-      console.error("Error loading current video from localStorage:", error);
-    }
-  }
-  return videos.length > 0 ? videos[0] : null;
-};
-
-const saveCurrentVideoToStorage = (videoId: number) => {
-  if (typeof window !== "undefined") {
-    try {
-      localStorage.setItem("edulearn-current-video", videoId.toString());
-    } catch (error) {
-      console.error("Error saving current video to localStorage:", error);
-    }
-  }
-};
-
-type Video = {
-  id: number;
-  url: string;
-  title: string;
-  description: string;
-  category: string;
-};
-
-type VideoInput = {
-  title: string;
-  description: string;
-  url: string;
-  category: string;
-};
 
 export default function Home() {
-  const [videos, setVideos] = useState<Video[]>([]);
-  const [currentVideo, setCurrentVideo] = useState<Video | null>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  // Load data from localStorage on component mount
-  useEffect(() => {
-    const loadedVideos = loadVideosFromStorage();
-    setVideos(loadedVideos);
-    const loadedCurrentVideo = loadCurrentVideoFromStorage(loadedVideos);
-    setCurrentVideo(loadedCurrentVideo);
-    setIsLoaded(true);
-  }, []);
-
-  // Save videos to localStorage whenever videos change
-  useEffect(() => {
-    if (isLoaded) {
-      saveVideosToStorage(videos);
-    }
-  }, [videos, isLoaded]);
-
-  // Save current video to localStorage whenever currentVideo changes
-  useEffect(() => {
-    if (isLoaded && currentVideo) {
-      saveCurrentVideoToStorage(currentVideo.id);
-    }
-  }, [currentVideo, isLoaded]);
-
-  const handleAddVideo = (video: VideoInput) => {
-    const newVideo = { ...video, id: Date.now() };
-    setVideos((prevVideos) => [...prevVideos, newVideo]);
-  };
-
-  const handleDeleteVideo = (id: number) => {
-    const newVideos = videos.filter((video) => video.id !== id);
-    setVideos(newVideos);
-
-    if (currentVideo && currentVideo.id === id) {
-      const newCurrentVideo = newVideos.length > 0 ? newVideos[0] : null;
-      setCurrentVideo(newCurrentVideo);
-    }
-  };
-
-  const handleWatchVideo = (video: Video) => {
-    setCurrentVideo(video);
-  };
+    const {
+    videos,
+    currentVideo,
+    isLoaded,
+    handleAddVideo,
+    handleDeleteVideo,
+    handleWatchVideo,
+  } = useVideoManager();
 
   // Don't render until data is loaded from localStorage
   if (!isLoaded) {
@@ -208,7 +75,7 @@ export default function Home() {
                       Ready to Start Learning?
                     </h3>
                     <p className="text-slate-500">
-                      Select a video from the library to begin your educational
+                      Add a new video or select a video from the library to begin your educational
                       journey.
                     </p>
                   </div>
