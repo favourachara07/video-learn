@@ -2,14 +2,25 @@
 
 import React, { useState } from "react";
 
-const AddVideoForm = ({ onAddVideo }) => {
+type VideoInput = {
+  title: string;
+  description: string;
+  url: string;
+  category: string;
+};
+
+interface AddVideoFormProps {
+  onAddVideo: (video: VideoInput) => void;
+}
+
+const AddVideoForm: React.FC<AddVideoFormProps> = ({ onAddVideo }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [url, setUrl] = useState("");
   const [category, setCategory] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!title || !description || !url) {
       return;
@@ -17,7 +28,6 @@ const AddVideoForm = ({ onAddVideo }) => {
 
     setIsSubmitting(true);
 
-    // Simulate API call delay for better UX
     setTimeout(() => {
       onAddVideo({ title, description, url, category: category || "General" });
       setTitle("");
@@ -97,7 +107,7 @@ const AddVideoForm = ({ onAddVideo }) => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
-              rows="4"
+              rows={4}
               placeholder="Describe what students will learn..."
               className="w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 placeholder-slate-400 resize-none"
             />

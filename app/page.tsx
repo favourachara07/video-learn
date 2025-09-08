@@ -4,36 +4,10 @@ import { useState, useEffect } from "react";
 import VideoPlayer from "./components/VideoPlayer";
 import AddVideoForm from "./components/AddVideoForm";
 import VideoList from "./components/VideoList";
-
-const initialVideos = [
-  {
-    id: 1,
-    title: "Introduction to Next.js",
-    description:
-      "A comprehensive overview of the Next.js framework, covering its main features like Server-Side Rendering and Static Site Generation.",
-    url: "https://www.youtube.com/watch?v=kC88u9-i-dc",
-    category: "Frameworks",
-  },
-  {
-    id: 2,
-    title: "Tailwind CSS for Beginners",
-    description:
-      "Learn the basics of Tailwind CSS and how to build beautiful, custom designs without writing a single line of custom CSS.",
-    url: "https://www.youtube.com/watch?v=pfaSUYaSgPo",
-    category: "CSS",
-  },
-  {
-    id: 3,
-    title: "Mastering React State",
-    description:
-      "Deep dive into React state management, from useState to context API and beyond.",
-    url: "https://www.youtube.com/watch?v=1wZoGFF_n7Y",
-    category: "React",
-  },
-];
+import { initialVideos } from "./components/data";
 
 // Helper function to extract YouTube video ID from URL
-const getYouTubeID = (url) => {
+const getYouTubeID = (url: string) => {
   const regExp =
     /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
   const match = url.match(regExp);
@@ -57,7 +31,15 @@ const loadVideosFromStorage = () => {
   return initialVideos;
 };
 
-const saveVideosToStorage = (videos) => {
+const saveVideosToStorage = (
+  videos: Array<{
+    id: number;
+    url: string;
+    title: string;
+    description: string;
+    category: string;
+  }>
+) => {
   if (typeof window !== "undefined") {
     try {
       localStorage.setItem("edulearn-videos", JSON.stringify(videos));
@@ -67,7 +49,15 @@ const saveVideosToStorage = (videos) => {
   }
 };
 
-const loadCurrentVideoFromStorage = (videos) => {
+const loadCurrentVideoFromStorage = (
+  videos: Array<{
+    id: number;
+    url: string;
+    title: string;
+    description: string;
+    category: string;
+  }>
+) => {
   if (typeof window !== "undefined") {
     try {
       const savedCurrentVideoId = localStorage.getItem(
@@ -88,7 +78,7 @@ const loadCurrentVideoFromStorage = (videos) => {
   return videos.length > 0 ? videos[0] : null;
 };
 
-const saveCurrentVideoToStorage = (videoId) => {
+const saveCurrentVideoToStorage = (videoId: number) => {
   if (typeof window !== "undefined") {
     try {
       localStorage.setItem("edulearn-current-video", videoId.toString());
@@ -98,9 +88,24 @@ const saveCurrentVideoToStorage = (videoId) => {
   }
 };
 
+type Video = {
+  id: number;
+  url: string;
+  title: string;
+  description: string;
+  category: string;
+};
+
+type VideoInput = {
+  title: string;
+  description: string;
+  url: string;
+  category: string;
+};
+
 export default function Home() {
-  const [videos, setVideos] = useState([]);
-  const [currentVideo, setCurrentVideo] = useState(null);
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [currentVideo, setCurrentVideo] = useState<Video | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Load data from localStorage on component mount
@@ -126,12 +131,12 @@ export default function Home() {
     }
   }, [currentVideo, isLoaded]);
 
-  const handleAddVideo = (video) => {
+  const handleAddVideo = (video: VideoInput) => {
     const newVideo = { ...video, id: Date.now() };
     setVideos((prevVideos) => [...prevVideos, newVideo]);
   };
 
-  const handleDeleteVideo = (id) => {
+  const handleDeleteVideo = (id: number) => {
     const newVideos = videos.filter((video) => video.id !== id);
     setVideos(newVideos);
 
@@ -141,7 +146,7 @@ export default function Home() {
     }
   };
 
-  const handleWatchVideo = (video) => {
+  const handleWatchVideo = (video: Video) => {
     setCurrentVideo(video);
   };
 

@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 
-const VideoPlayer = ({ videoId }) => {
+interface VideoPlayerProps {
+  videoId: string;
+}
+
+const VideoPlayer = ({ videoId }: VideoPlayerProps) => {
   const [isLoading, setIsLoading] = useState(true);
 
   return (

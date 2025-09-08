@@ -1,6 +1,26 @@
 "use client";
 
-const VideoList = ({ videos, currentVideoId, onWatch, onDelete }) => {
+type WatchVideo = {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  url: string;
+};
+
+type VideoListProps = {
+  videos: WatchVideo[];
+  currentVideoId?: number;
+  onWatch: (video: WatchVideo) => void;
+  onDelete: (id: number) => void;
+};
+
+const VideoList = ({
+  videos,
+  currentVideoId,
+  onWatch,
+  onDelete,
+}: VideoListProps) => {
   return (
     <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 overflow-hidden">
       <div className="bg-gradient-to-r from-indigo-600 to-indigo-400 p-6 text-white">
